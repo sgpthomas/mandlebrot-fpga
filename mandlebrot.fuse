@@ -36,7 +36,7 @@ for (let i: ubit<13> = 0..4096) unroll 1 {
     ---
     let z_img_2 = z_img * z_img;
     let z_real_2 = z_real * z_real;
-    if (outputs[i] == 0 || z_img_2 < (0.0 as fix<64, 32>) || z_real_2 < (0.0 as fix<64, 32>) || z_img_2 + z_real_2 < (0.0 as fix<64, 32>) || z_img_2 + z_real_2 > (4.0 as fix<64, 32>)) {
+    if (outputs[i] == 0 || (0.0 as fix<64, 32>) > z_img_2 || (0.0 as fix<64, 32>) > z_real_2 || (0.0 as fix<64, 32>) > z_img_2 + z_real_2 || z_img_2 + z_real_2 > (4.0 as fix<64, 32>)) {
       outputs[i] := 0;
     } else {
       z_real_mem[i] := z_real_2 - z_img_2 + c_real;

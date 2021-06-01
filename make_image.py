@@ -6,7 +6,7 @@ import numpy as np
 import sys
 import decimal as d
 from decimal import Decimal
-from gen_mandlebrot import X_RANGE, Y_RANGE
+from mandlebrot import X_RANGE, Y_RANGE
 
 from PIL import Image
 

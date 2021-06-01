@@ -59,9 +59,12 @@ def generate(width, precision, unroll, n_iters):
     underflow_check = " || ".join(
         [
             "outputs[i] == 0",
-            f"z_img_2 < (0.0 as {fix_type})",
-            f"z_real_2 < (0.0 as {fix_type})",
-            f"z_img_2 + z_real_2 < (0.0 as {fix_type})",
+            f"(0.0 as {fix_type}) > z_img_2",
+            f"(0.0 as {fix_type}) > z_real_2",
+            f"(0.0 as {fix_type}) > z_img_2 + z_real_2",
+            # f"z_img_2 < (0.0 as {fix_type})",
+            # f"z_real_2 < (0.0 as {fix_type})",
+            # f"z_img_2 + z_real_2 < (0.0 as {fix_type})",
             f"z_img_2 + z_real_2 > (4.0 as {fix_type})",
         ]
     )
