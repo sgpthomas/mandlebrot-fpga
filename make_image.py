@@ -6,12 +6,12 @@ import numpy as np
 import sys
 import decimal as d
 from decimal import Decimal
-from mandlebrot import X_RANGE, Y_RANGE
+from stage import X_RANGE, Y_RANGE
 
 from PIL import Image
 
 
-def make_image(vals):
+def make_image(vals, dest_file):
     width = int(math.sqrt(len(vals)))
     image_vals = np.reshape(vals, (width, width))
 
@@ -31,16 +31,16 @@ def make_image(vals):
     y_width = Y_RANGE[1] - Y_RANGE[0]
 
     # image = Image.fromarray(image_vals, mode="1")
-    image.resize((2000, int(2000 * (y_width / x_width)))).show()
+    image.resize((2000, int(2000 * (y_width / x_width)))).save(dest_file)
 
 
-def calyx_mandlebrot():
+def calyx_mandlebrot(src_file="results.json", dest_file="mandelbrot.png"):
     data = None
-    with open("results.json") as f:
+    with open(src_file) as f:
         data = json.load(f, use_decimal=True)
 
     vals = data["memories"]["int_outputs0"]
-    make_image(vals)
+    make_image(vals, dest_file)
 
 
 def python_mandlebrot(n_iters):
@@ -49,7 +49,7 @@ def python_mandlebrot(n_iters):
         data = json.load(f, use_decimal=True)
 
     with d.localcontext() as ctx:
-        ctx.prec = 8
+        ctx.prec = 32
 
         c_real_mem = list(map(lambda x: Decimal(x), data["memories"]["int_c_real0"]))
         c_img_mem = list(map(lambda x: Decimal(x), data["memories"]["int_c_img0"]))
@@ -68,7 +68,8 @@ def python_mandlebrot(n_iters):
             for _ in range(int(n_iters)):
                 z_real = z_real_mem[i]
                 z_img = z_img_mem[i]
-                if ((z_img * z_img) + (z_real * z_real)) > 4:
+                if ((z_img * z_img) + (z_real * z_real)) > 4 or outputs[i] == 0:
+                    print(i)
                     outputs[i] = 0
                 else:
                     z_real_mem[i] = (z_real * z_real) - (z_img * z_img) + c_real
@@ -77,10 +78,10 @@ def python_mandlebrot(n_iters):
 
 
 def main():
-    if len(sys.argv) > 1:
-        python_mandlebrot(sys.argv[1])
-    else:
-        calyx_mandlebrot()
+    # if len(sys.argv) > 1:
+    #     python_mandlebrot(sys.argv[1])
+    # else:
+    calyx_mandlebrot(sys.argv[1], sys.argv[2])
 
 
 if __name__ == "__main__":
